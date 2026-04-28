@@ -53,10 +53,38 @@ git push origin hotfix/수정명
 
 ## 커밋 메시지 규칙
 
+### 포맷
 ```
-feat: VR 이동 시스템 추가
-fix: 카메라 떨림 현상 수정
-refactor: 인터랙션 매니저 구조 개선
-asset: 환경 프리팹 업데이트
-docs: README 수정
+v버전] 타입. 설명 (영어)
+```
+
+### 예시
+```
+v0.0.1] feat. Add VR locomotion system
+v0.0.1] fix. Resolve camera jitter in VR mode
+v0.0.2] edit. Adjust hand interaction grab distance
+v0.0.2] refactor. Simplify interaction manager structure
+v0.0.2] asset. Update environment prefabs
+v0.0.3] docs. Update README setup guide
+v0.0.3] chore. Configure Git LFS for binary assets
+```
+
+### 타입 정의
+
+| 타입 | 용도 |
+|------|------|
+| `feat` | 새 기능 추가 |
+| `fix` | 버그 수정 |
+| `edit` | 기존 기능 수정/조정 |
+| `refactor` | 코드 구조 개선 (동작 변화 없음) |
+| `asset` | 씬·프리팹·텍스처 등 에셋 작업 |
+| `docs` | 문서 수정 |
+| `chore` | 빌드·설정 등 기타 작업 |
+
+### 버전 규칙
+```
+v메이저.마이너.패치
+  │      │     └── 버그 수정, 소규모 수정
+  │      └──────── 기능 추가, 씬 구성 변경
+  └─────────────── 대규모 구조 변경, 마일스톤
 ```
