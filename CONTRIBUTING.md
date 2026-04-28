@@ -4,19 +4,17 @@
 
 ```
 main
-└── develop
-    ├── feature/기능명
-    ├── fix/버그명
-    └── hotfix/긴급수정명   ← main에서 분기
+├── feature/기능명   ← 새 기능
+├── fix/버그명       ← 버그 수정
+└── hotfix/긴급수정  ← 긴급 수정
 ```
 
 | 브랜치 | 용도 | 병합 대상 |
 |--------|------|-----------|
-| `main` | 안정 배포 버전 | — (PR만 허용) |
-| `develop` | 통합 개발 브랜치 | main |
-| `feature/*` | 새 기능 개발 | develop |
-| `fix/*` | 버그 수정 | develop |
-| `hotfix/*` | 긴급 수정 | main + develop |
+| `main` | 안정 버전 | — (PR만 허용) |
+| `feature/*` | 새 기능 개발 | main |
+| `fix/*` | 버그 수정 | main |
+| `hotfix/*` | 긴급 수정 | main |
 
 ## 브랜치 네이밍 규칙
 
@@ -29,26 +27,16 @@ hotfix/build-crash
 
 ## 작업 흐름
 
-### 일반 기능 개발
-```bash
-git checkout develop
-git pull origin develop
-git checkout -b feature/기능명
-
-# 작업 후
-git push origin feature/기능명
-# → GitHub에서 develop으로 PR 생성
-```
-
-### 긴급 수정 (hotfix)
 ```bash
 git checkout main
 git pull origin main
-git checkout -b hotfix/수정명
+git checkout -b feature/기능명
 
-# 수정 후
-git push origin hotfix/수정명
-# → GitHub에서 main + develop 둘 다 PR 생성
+# 작업 후 Unity 닫고
+git add .
+git commit -m "v0.0.1] feat. Add locomotion system"
+git push origin feature/기능명
+# → GitHub에서 main으로 PR 생성
 ```
 
 ## 커밋 메시지 규칙
