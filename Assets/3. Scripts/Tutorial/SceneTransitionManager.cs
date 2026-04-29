@@ -6,8 +6,8 @@ namespace VRTutorial
 {
     /// <summary>
     /// Zone 씬 간 전환을 담당.
-    /// XR Origin(이 컴포넌트가 붙은 GameObject)과 TutorialSession을 DontDestroyOnLoad로 유지한다.
-    /// Zone1_Locomotion 씬의 XR Origin에 붙여서 사용.
+    /// Player 계층 어디에 붙여도 동작하도록 root GO를 DontDestroyOnLoad 처리한다.
+    /// TutorialSession은 별도 root GO에 자동 생성한다.
     /// </summary>
     public class SceneTransitionManager : MonoBehaviour
     {
@@ -31,11 +31,17 @@ namespace VRTutorial
         {
             if (Instance != null) { Destroy(gameObject); return; }
             Instance = this;
-            DontDestroyOnLoad(gameObject);
 
-            // TutorialSession이 없으면 함께 생성
+            // Player 계층 전체(root GO)를 유지 — 어디에 붙어도 동작
+            DontDestroyOnLoad(transform.root.gameObject);
+
+            // TutorialSession은 독립 root GO로 생성해야 DontDestroyOnLoad 가능
             if (TutorialSession.Instance == null)
-                gameObject.AddComponent<TutorialSession>();
+            {
+                var sessionGO = new GameObject("[TutorialSession]");
+                DontDestroyOnLoad(sessionGO);
+                sessionGO.AddComponent<TutorialSession>();
+            }
         }
 
         public void GoToNextZone()

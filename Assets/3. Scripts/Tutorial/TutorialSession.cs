@@ -51,7 +51,10 @@ namespace VRTutorial
         {
             if (Instance != null) { Destroy(gameObject); return; }
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            // SceneTransitionManager가 root GO에 생성하므로 보통 이미 처리됨.
+            // 씬에 직접 배치한 경우를 위한 fallback.
+            if (transform.parent == null)
+                DontDestroyOnLoad(gameObject);
         }
 
         public void AddScore(int zoneIndex, int points)
