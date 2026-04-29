@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 namespace VRTutorial
@@ -19,8 +18,7 @@ namespace VRTutorial
             if (hitEffectPrefab)
                 Instantiate(hitEffectPrefab, transform.position, Quaternion.identity);
 
-            if (hitSound)
-                AudioSource.PlayClipAtPoint(hitSound, transform.position);
+            AudioHelper.Play3D(hitSound, transform.position);
 
             col.gameObject.GetComponent<SpellTarget>()?.OnHit();
             Destroy(gameObject);

@@ -1,10 +1,10 @@
 using UnityEngine;
-using TMPro;
 
 namespace VRTutorial
 {
     /// <summary>
-    /// 마법에 맞으면 터지는 타겟. 일정 수 격파 시 Zone3 완료.
+    /// 마법에 맞으면 터지는 타겟.
+    /// 카운터는 SpellZoneProgress가 관리 (static 필드 사용 안함).
     /// </summary>
     public class SpellTarget : MonoBehaviour
     {
@@ -12,31 +12,34 @@ namespace VRTutorial
         [SerializeField] GameObject destroyEffect;
         [SerializeField] AudioClip popSound;
 
-        static int totalDestroyed = 0;
-        static int totalTargets = 0;
-
         SpellZoneProgress zoneProgress;
         int hitsReceived = 0;
 
         void Awake()
         {
-            totalTargets++;
             zoneProgress = FindObjectOfType<SpellZoneProgress>();
+            zoneProgress?.RegisterTarget(this);
         }
 
-        void OnDestroy() => totalTargets--;
+        void OnDestroy()
+        {
+            zoneProgress?.UnregisterTarget(this);
+        }
 
         public void OnHit()
         {
             hitsReceived++;
             if (hitsReceived < hitsRequired) return;
 
-            totalDestroyed++;
             TutorialSession.Instance?.AddScore(2, 20);
-            if (destroyEffect) Instantiate(destroyEffect, transform.position, Quaternion.identity);
-            if (popSound) AudioSource.PlayClipAtPoint(popSound, transform.position);
 
-            zoneProgress?.OnTargetDestroyed(totalDestroyed, totalTargets + totalDestroyed);
+            if (destroyEffect)
+                Instantiate(destroyEffect, transform.position, Quaternion.identity);
+
+            AudioHelper.Play3D(popSound, transform.position);
+
+            // OnDestroy에서 UnregisterTarget이 호출되므로 먼저 진행 알림
+            zoneProgress?.OnTargetDestroyed();
             Destroy(gameObject);
         }
     }
