@@ -127,7 +127,7 @@ namespace VRTutorial
             if (proj.TryGetComponent<Rigidbody>(out var rb))
             {
                 rb.useGravity = false;
-                rb.linearVelocity = dir * projectileSpeed;
+                rb.velocity = dir * projectileSpeed;
             }
 
             lastFireTime = Time.time;

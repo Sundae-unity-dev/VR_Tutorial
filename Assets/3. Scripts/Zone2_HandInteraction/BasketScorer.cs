@@ -20,6 +20,7 @@ namespace VRTutorial
             if (!other.CompareTag("Grabbable")) return;
 
             score++;
+            TutorialSession.Instance?.AddScore(1, 10);
             UpdateUI();
             successSound?.Play();
 

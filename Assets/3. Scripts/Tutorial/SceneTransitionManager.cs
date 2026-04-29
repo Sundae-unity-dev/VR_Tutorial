@@ -1,19 +1,19 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro;
 
 namespace VRTutorial
 {
     /// <summary>
-    /// Zone 씬 간 전환을 담당. XR Origin은 DontDestroyOnLoad로 유지.
-    /// Zone1 씬에서 이 컴포넌트를 XR Origin에 붙여두면 된다.
+    /// Zone 씬 간 전환을 담당.
+    /// XR Origin(이 컴포넌트가 붙은 GameObject)과 TutorialSession을 DontDestroyOnLoad로 유지한다.
+    /// Zone1_Locomotion 씬의 XR Origin에 붙여서 사용.
     /// </summary>
     public class SceneTransitionManager : MonoBehaviour
     {
         public static SceneTransitionManager Instance { get; private set; }
 
-        [Header("Scenes (Build Settings 순서와 일치)")]
+        [Header("Scenes")]
         [SerializeField] string[] zoneSceneNames = {
             "Zone1_Locomotion",
             "Zone2_HandInteraction",
@@ -24,20 +24,27 @@ namespace VRTutorial
         [SerializeField] CanvasGroup fadeCanvas;
         [SerializeField] float fadeDuration = 0.8f;
 
-        int currentZoneIndex = 0;
+        public int CurrentZoneIndex { get; private set; } = 0;
+        public string CurrentZoneName => zoneSceneNames[CurrentZoneIndex];
 
         void Awake()
         {
             if (Instance != null) { Destroy(gameObject); return; }
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
+            // TutorialSession이 없으면 함께 생성
+            if (TutorialSession.Instance == null)
+                gameObject.AddComponent<TutorialSession>();
         }
 
         public void GoToNextZone()
         {
-            int next = currentZoneIndex + 1;
+            int next = CurrentZoneIndex + 1;
             if (next < zoneSceneNames.Length)
                 StartCoroutine(LoadZone(next));
+            else
+                StartCoroutine(ShowCompletion());
         }
 
         public void GoToZone(int index)
@@ -48,11 +55,20 @@ namespace VRTutorial
 
         IEnumerator LoadZone(int index)
         {
+            TutorialSession.Instance?.CompleteZone(CurrentZoneIndex);
+
             yield return StartCoroutine(Fade(1f));
-
-            currentZoneIndex = index;
+            CurrentZoneIndex = index;
             yield return SceneManager.LoadSceneAsync(zoneSceneNames[index]);
+            yield return StartCoroutine(Fade(0f));
+        }
 
+        IEnumerator ShowCompletion()
+        {
+            TutorialSession.Instance?.CompleteZone(CurrentZoneIndex);
+            yield return StartCoroutine(Fade(1f));
+            // 모든 존 완료 — 필요 시 결과 씬 추가 가능
+            Debug.Log($"[Tutorial] All zones complete! Total score: {TutorialSession.Instance?.TotalScore}");
             yield return StartCoroutine(Fade(0f));
         }
 

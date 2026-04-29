@@ -32,6 +32,7 @@ namespace VRTutorial
             if (hitsReceived < hitsRequired) return;
 
             totalDestroyed++;
+            TutorialSession.Instance?.AddScore(2, 20);
             if (destroyEffect) Instantiate(destroyEffect, transform.position, Quaternion.identity);
             if (popSound) AudioSource.PlayClipAtPoint(popSound, transform.position);
 
