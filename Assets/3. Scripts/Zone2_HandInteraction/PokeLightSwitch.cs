@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 namespace VRTutorial
 {
@@ -8,7 +10,7 @@ namespace VRTutorial
     /// 찌르기(Poke) 인터랙션으로 켜고 끄는 스위치.
     /// XRI PokeInteractable과 함께 사용. 컨트롤러 인터랙터에 햅틱 피드백 전송.
     /// </summary>
-    [RequireComponent(typeof(UnityEngine.XR.Interaction.Toolkit.Interactables.XRBaseInteractable))]
+    [RequireComponent(typeof(XRBaseInteractable))]
     public class PokeLightSwitch : MonoBehaviour
     {
         [SerializeField] Light targetLight;
@@ -24,13 +26,13 @@ namespace VRTutorial
         static readonly int ColorId = Shader.PropertyToID("_Color");
         MaterialPropertyBlock mpb;
 
-        UnityEngine.XR.Interaction.Toolkit.Interactables.XRBaseInteractable interactable;
+        XRBaseInteractable interactable;
         bool isOn = false;
 
         void Awake()
         {
             mpb = new MaterialPropertyBlock();
-            interactable = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRBaseInteractable>();
+            interactable = GetComponent<XRBaseInteractable>();
         }
 
         void OnEnable()
@@ -59,9 +61,9 @@ namespace VRTutorial
             onToggle?.Invoke();
         }
 
-        void SendHaptic(UnityEngine.XR.Interaction.Toolkit.Interactors.IXRSelectInteractor interactor)
+        void SendHaptic(IXRSelectInteractor interactor)
         {
-            if (interactor is UnityEngine.XR.Interaction.Toolkit.Interactors.XRBaseInputInteractor controllerInteractor)
+            if (interactor is XRBaseInputInteractor controllerInteractor)
                 controllerInteractor.SendHapticImpulse(hapticAmplitude, hapticDuration);
         }
 
